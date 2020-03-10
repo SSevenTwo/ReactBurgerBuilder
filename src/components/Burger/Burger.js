@@ -4,8 +4,8 @@ import BurgerIngredient from "../BurgerIngredient/BurgerIngredient";
 import classes from "./Burger.module.css";
 
 const burger = props => {
-  const transformedIngredients = Object.keys(props.ingredients).map(
-    ingredientKey => {
+  let transformedIngredients = Object.keys(props.ingredients)
+    .map(ingredientKey => {
       // The Array(integer) method creates an array with the specified number
       // of elements. So we pass in the number of a certain ingredient.
       // We then create a burger ingredient for each element in the array.
@@ -15,8 +15,17 @@ const burger = props => {
           <BurgerIngredient key={ingredientKey + index} type={ingredientKey} />
         );
       });
-    }
-  );
+    }) // Reduce to flatten the array
+    .reduce((arr, el) => {
+      //combining arrays into arr( the initial array of [])
+      return arr.concat(el);
+    }, []);
+
+  console.log("Transformed ingredients:");
+  console.log(transformedIngredients);
+  if (transformedIngredients.length === 0) {
+    transformedIngredients = <p>Please start adding ingredients!</p>;
+  }
 
   return (
     <div className={classes.Burger}>
