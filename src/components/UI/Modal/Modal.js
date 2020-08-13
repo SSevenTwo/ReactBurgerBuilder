@@ -20,4 +20,5 @@ const modal = props => {
   );
 };
 
-export default modal;
+// Prevent unecessary re-renders with memo
+export default React.memo(modal);
