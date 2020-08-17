@@ -4,6 +4,7 @@ import Button from "../../../components/UI/Button/Button";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Input from "../../../components/UI/Input/Input";
 import axios from "../../../axios-orders";
+import { connect } from "react-redux";
 
 class ContactData extends Component {
   state = {
@@ -84,8 +85,11 @@ class ContactData extends Component {
           ],
         },
         value: "fastest",
+        validation: {},
+        valid: true,
       },
     },
+    formIsValid: false,
     loading: false,
   };
 
@@ -140,9 +144,7 @@ class ContactData extends Component {
     updatedFormElement.value = event.target.value;
 
     // Check validity
-    if (updatedFormElement.validation) {
-      updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
-    }
+    updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
 
     // Update touched
     updatedFormElement.touched = true;
@@ -150,7 +152,13 @@ class ContactData extends Component {
     // Update copid order form
     updatedOrderForm[inputIdentifier] = updatedFormElement;
 
-    this.setState({ orderForm: updatedOrderForm });
+    // Check overall form validity
+    let formIsValid = true;
+    for (let identifier in updatedOrderForm) {
+      formIsValid = updatedOrderForm[identifier].valid && formIsValid;
+    }
+
+    this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
   };
 
   render() {
@@ -176,7 +184,9 @@ class ContactData extends Component {
             touched={formElement.config.touched}
           />
         ))}
-        <Button btnType="Success">ORDER</Button>
+        <Button btnType="Success" disabled={!this.state.formIsValid}>
+          ORDER
+        </Button>
       </form>
     );
 
@@ -193,4 +203,11 @@ class ContactData extends Component {
   }
 }
 
-export default ContactData;
+const mapStateToProps = (state) => {
+  return {
+    ingredients: state.ingredients,
+    price: state.totalPrice,
+  };
+};
+
+export default connect(mapStateToProps)(ContactData);
