@@ -1,4 +1,5 @@
 import * as actionTypes from "../actions/actionTypes";
+import { updateObject } from "../utility";
 
 const initialState = {
   orders: [],
@@ -6,47 +7,62 @@ const initialState = {
   purchased: false,
 };
 
+const purchaseInit = (state, action) => {
+  return updateObject(state, { purchased: false });
+};
+
+const purchasBurgereStart = (state, action) => {
+  return updateObject(state, { loading: true });
+};
+
+const purchasBurgereSuccess = (state, action) => {
+  const combinedOrderData = updateObject(action.orderData, { id: action.orderId, ...action.orderData });
+  return updateObject(state, {
+    loading: false,
+    purchased: true,
+    orders: state.orders.concat(combinedOrderData),
+  });
+};
+
+const purchasBurgereFailed = (state, action) => {
+  return updateObject(state, { loading: false });
+};
+
+const fetchOrdersStart = (state, action) => {
+  return updateObject(state, { loading: true });
+};
+
+const fetchOrdersSuccess = (state, action) => {
+  return updateObject(state, { loading: false, orders: action.orders });
+};
+
+const fetchOrderFailed = (state, action) => {
+  return updateObject(state, { loading: false });
+};
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.PURCHASE_INIT:
-      return {
-        ...state,
-        purchased: false,
-      };
+      return purchaseInit(state, action);
+
     case actionTypes.PURCHASE_BURGER_START:
-      return {
-        ...state,
-        loading: true,
-      };
+      return purchasBurgereStart(state, action);
+
     case actionTypes.PURCHASE_BURGER_SUCCESS:
-      const combinedOrderData = { id: action.orderId, ...action.orderData };
-      return {
-        ...state,
-        loading: false,
-        purchased: true,
-        orders: state.orders.concat(combinedOrderData),
-      };
+      return purchasBurgereSuccess(state, action);
+
     case actionTypes.PURCHASE_BURGER_FAILED:
-      return {
-        ...state,
-        loading: false,
-      };
+      return purchasBurgereFailed(state, action);
+
     case actionTypes.FETCH_ORDERS_START:
-      return {
-        ...state,
-        loading: true,
-      };
+      return fetchOrdersStart(state, action);
+
     case actionTypes.FETCH_ORDERS_SUCCESS:
-      return {
-        ...state,
-        orders: action.orders,
-        loading: false,
-      };
+      return fetchOrdersSuccess(state, action);
+
     case actionTypes.FETCH_ORDERS_FAIL:
-      return {
-        ...state,
-        loading: false,
-      };
+      return fetchOrderFailed(state, action);
+
     default:
       return state;
   }
