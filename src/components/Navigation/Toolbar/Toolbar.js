@@ -4,7 +4,7 @@ import Logo from "../../Logo/Logo";
 import NavigationItems from "../NavigationItems/NavigationItems";
 import DrawerToggler from "../SideDrawer/DrawerToggle/DrawerToggle";
 
-const toolbar = props => {
+const toolbar = (props) => {
   return (
     <header className={classes.Toolbar}>
       <DrawerToggler openSideDrawHandler={props.openSideDrawHandler} />
@@ -12,7 +12,7 @@ const toolbar = props => {
         <Logo />
       </div>
       <nav className={classes.DesktopOnly}>
-        <NavigationItems />
+        <NavigationItems isAuthenticated={props.isAuthenticated} />
       </nav>
     </header>
   );
